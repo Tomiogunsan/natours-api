@@ -8,8 +8,7 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`, 'utf-8')
 );
 
-// app.get('/', (req, res) => res.status(200).send('Hello World!'))
-app.get('/api/v1/tours', (req, res) => {
+const getAllTours = (req, res) => {
   res.status(200).json({
     status: 'success',
     results: tours.length,
@@ -17,15 +16,16 @@ app.get('/api/v1/tours', (req, res) => {
       tours,
     },
   });
-});
-app.get('/api/v1/tours/:id', (req, res) => {
+};
+
+const getTour = (req, res) => {
   console.log(req.params);
   const id = req.params.id * 1;
-  if(id > tours.length) {
-      return res.status(404).json({
-        status: 'fail',
-        message: 'Invalid ID'
-    })
+  if (id > tours.length) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Invalid ID',
+    });
   }
   const tour = tours.find((el) => el.id === id);
   res.status(200).json({
@@ -34,7 +34,10 @@ app.get('/api/v1/tours/:id', (req, res) => {
       tour,
     },
   });
-});
+};
+// app.get('/', (req, res) => res.status(200).send('Hello World!'))
+app.get('/api/v1/tours', getAllTours);
+app.get('/api/v1/tours/:id', getTour );
 
 app.post('/api/v1/tours', (req, res) => {
   console.log(req.body);
