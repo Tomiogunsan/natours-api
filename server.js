@@ -16,6 +16,7 @@ mongoose
     useCreateIndex: true,
     useFindAndModify: false,
     useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 60000,
   })
   .then(() => {
     console.log('DB connection successful!');
