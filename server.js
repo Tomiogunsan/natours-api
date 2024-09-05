@@ -22,19 +22,6 @@ mongoose
   })
   .catch((err) => console.error('MongoDB connection error:', err));
 
-
-
-const testTour = new Tour({
-  name: 'The Forest Hiker',
-  rating: 4.7,
-  price: 497,
-});
-
-testTour
-  .save()
-  .then((doc) => console.log(doc))
-  .catch((err) => console.log(err));
-
 const port = process.env.PORT || 3000;
 
 // eslint-disable-next-line no-console
