@@ -20,4 +20,12 @@ app.use(express.static(`${__dirname}/public`));
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 
+// handling unhandled routes
+app.all('*', (req, res) => {
+  res.status(404).json({
+    status: 'fail',
+    message: `can't find ${req.originalUrl} on this server`,
+  });
+});
+
 module.exports = app;
