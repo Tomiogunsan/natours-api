@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+// eslint-disable-next-line import/no-extraneous-dependencies
 const validator = require('validator');
 
 const userSchema = new mongoose.Schema({
@@ -18,6 +19,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'A password should be provided'],
     minLength: 8,
+  },
+  passwordConfirm: {
+    type: String,
+    required: [true, 'Please confrim your password'],
   },
 });
 
