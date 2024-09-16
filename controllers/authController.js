@@ -1,3 +1,4 @@
+const { promisify } = require('util');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const jwt = require('jsonwebtoken');
 
@@ -69,10 +70,25 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   }
   // verify token
-  
-
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
   // Check if user still exits
-
+  const freshUser = await User.findById(decoded.id);
+  if (!freshUser) {
+    next(
+      new AppError(
+        'The user belonging to this token does no longer exist',
+        401,
+      ),
+    );
+  }
+  // check if user changed password after the token was issued
+  if (freshUser.changedPasswordAfter(decoded.iat)) {
+    next(
+      new AppError('User recently changed password! Please log in again', 401),
+    );
+  }
+  // GRANT ACCESS TO PROTECTED ROUTE
+  req.user = freshUser;
   // check if user changed passwordafter the token was issued
   next();
 });
