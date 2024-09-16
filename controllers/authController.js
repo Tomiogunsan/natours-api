@@ -7,8 +7,9 @@ const AppError = require('../utils/appError');
 
 require('dotenv').config();
 
+// eslint-disable-next-line arrow-body-style
 const signToken = (id) => {
-  jwt.sign({ id }, process.env.JWT_SECRET, {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
@@ -48,7 +49,7 @@ exports.login = catchAsync(async (req, res, next) => {
   // if everything ok, send token to client
 
   const token = signToken(user._id);
-  console.log(user._id);
+
   res.status(200).json({
     status: 'success',
     token,
