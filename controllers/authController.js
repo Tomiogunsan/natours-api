@@ -72,8 +72,8 @@ exports.protect = catchAsync(async (req, res, next) => {
   // verify token
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
   // Check if user still exits
-  const freshUser = await User.findById(decoded.id);
-  if (!freshUser) {
+  const currentUser = await User.findById(decoded.id);
+  if (!currentUser) {
     next(
       new AppError(
         'The user belonging to this token does no longer exist',
@@ -82,13 +82,25 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   }
   // check if user changed password after the token was issued
-  if (freshUser.changedPasswordAfter(decoded.iat)) {
+  if (currentUser.changedPasswordAfter(decoded.iat)) {
     next(
       new AppError('User recently changed password! Please log in again', 401),
     );
   }
   // GRANT ACCESS TO PROTECTED ROUTE
-  req.user = freshUser;
+  req.user = currentUser;
   // check if user changed passwordafter the token was issued
   next();
 });
+
+// eslint-disable-next-line arrow-body-style
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError('You do not have permission to perform this action', 403),
+      );
+    }
+    next();
+  };
+};
